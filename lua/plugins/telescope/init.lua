@@ -18,6 +18,9 @@ return {
       if string.sub(entry_path, -1, -1) == "/" then
         entry_path = string.sub(entry_path, 1, -2)
       end
+      if not string.find(entry_path, "/") then
+        entry_path = "."
+      end
       require("telescope").extensions.file_browser.file_browser({ path = entry_path, quiet = true })
       -- if open_file then
       --   vim.api.nvim_input(u.basename(entry))
@@ -144,7 +147,7 @@ return {
           quiet = true,
           hijack_netrw = true,
           hide_parent_dir = true,
-          hidden = true,
+          hidden = false,
           mappings = {
             i = {
               [","] = fb_actions.goto_parent_dir,
