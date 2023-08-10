@@ -1,8 +1,8 @@
 local u = require("functions.utils")
 
 -- Splits
-vim.keymap.set("n", "ss", ":split<Return>")
-vim.keymap.set("n", "sv", ":vsplit<Return><C-w>w")
+vim.keymap.set("n", "ss", ":vsplit<Return><C-w>w")
+vim.keymap.set("n", "sv", ":split<Return>")
 vim.keymap.set("n", "sh", "<C-w>h")
 vim.keymap.set("n", "sj", "<C-w>j")
 vim.keymap.set("n", "sk", "<C-w>k")
@@ -28,8 +28,6 @@ vim.keymap.set("n", "&", function()                      -- Rename word under cu
 end)
 vim.keymap.set("v", "<leader>y", '"+y')  -- Copy to clipboard
 vim.keymap.set("n", "H", ":w<CR>")       -- Quick save
-vim.keymap.set("i", "<C-h>", "<Lseft>")  -- Move left in insert
-vim.keymap.set("i", "<C-l>", "<Right>")  -- Move right in insert
 vim.keymap.set("x", "<leader>p", '"_dP') -- Keep paste register after paste
 vim.keymap.set("n", "[<space>", u.blank_line_above)
 vim.keymap.set("n", "]<space>", u.blank_line_below)
