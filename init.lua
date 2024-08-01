@@ -1,34 +1,39 @@
--- Neovim Core Settings
-require("settings")
+vim.g.base46_cache = vim.fn.stdpath "data" .. "/nvchad/base46/"
+vim.g.mapleader = " "
 
--- Helper functions and autocommands
-require("functions")
-require("autocommands")
-require("commands")
+-- bootstrap lazy and all plugins
+local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
--- Plugins
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "--single-branch",
-    "https://github.com/folke/lazy.nvim.git",
-    lazypath,
-  })
+	local repo = "https://github.com/folke/lazy.nvim.git"
+	vim.fn.system { "git", "clone", "--filter=blob:none", repo, "--branch=stable", lazypath }
 end
-vim.opt.runtimepath:prepend(lazypath)
 
-require("lazy").setup("plugins", {
-  change_detection = {
-    enabled = true,
-    notify = false,
-  },
-})
+vim.opt.rtp:prepend(lazypath)
 
--- Mappings
-require("mappings")
+local lazy_config = require "configs.lazy"
 
--- Language Servers
-require("lsp")
+-- load plugins
+require("lazy").setup({
+	{
+		"NvChad/NvChad",
+		lazy = false,
+		branch = "v2.5",
+		import = "nvchad.plugins",
+		config = function()
+			require "options"
+		end,
+	},
+
+	{ import = "plugins" },
+}, lazy_config)
+
+-- load theme
+dofile(vim.g.base46_cache .. "defaults")
+dofile(vim.g.base46_cache .. "statusline")
+
+require "nvchad.autocmds"
+
+vim.schedule(function()
+	require "mappings"
+end)
