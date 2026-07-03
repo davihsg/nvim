@@ -1,23 +1,46 @@
--- load defaults i.e lua_lsp
+-- Load NvChad defaults (sets global capabilities, on_init, LspAttach for on_attach)
 require("nvchad.configs.lspconfig").defaults()
 
-local lspconfig = require "lspconfig"
+local python_root_markers = {
+  "ty.toml",
+  "pyrightconfig.json",
+  "pants.toml",
+  "pyproject.toml",
+  ".git",
+}
 
-local servers = {}
-local nvlsp = require "nvchad.configs.lspconfig"
+local function env_for_root(root_dir)
+  if not root_dir or root_dir == "" then
+    return nil
+  end
 
--- lsps with default config
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    on_attach = nvlsp.on_attach,
-    on_init = nvlsp.on_init,
-    capabilities = nvlsp.capabilities,
+  local matches = vim.fn.glob(root_dir .. "/dist/export/python/virtualenvs/python-default/*", false, true)
+  if #matches == 0 then
+    return nil
+  end
+
+  local venv = matches[1]
+  local bin_path = venv .. "/bin"
+  return {
+    VIRTUAL_ENV = venv,
+    PATH = bin_path .. ":" .. vim.env.PATH,
   }
 end
 
--- configuring single server, example: typescript
--- lspconfig.tsserver.setup {
---   on_attach = nvlsp.on_attach,
---   on_init = nvlsp.on_init,
---   capabilities = nvlsp.capabilities,
--- }
+vim.lsp.config("ty", {
+  root_markers = python_root_markers,
+  on_new_config = function(new_config, root_dir)
+    new_config.cmd_env = env_for_root(root_dir)
+  end,
+})
+
+local servers = {
+  "terraformls",
+  "ty",
+  "ts_ls",
+  "gopls",
+}
+
+for _, server in ipairs(servers) do
+  vim.lsp.enable(server)
+end

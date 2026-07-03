@@ -32,6 +32,9 @@ require("lazy").setup({
 dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 
+-- init NvChad UI modules (tabufline/statusline/etc)
+require "nvchad"
+
 require "nvchad.autocmds"
 
 vim.schedule(function()
